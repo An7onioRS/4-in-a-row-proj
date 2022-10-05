@@ -1,4 +1,4 @@
-const game = () => {
+const createGame = () => {
 
 }
 
@@ -15,7 +15,7 @@ const createPlayer = (name, id, active = false, color) => {
          * @param {integer} num - Number of token objects to be created
          */
 
-        createTokens(number) {
+        constructTokens(number) {
             const tokens = []
             for (let i = 0; i < number; i++) {
                 tokens.push(createToken(this, i))
@@ -27,7 +27,21 @@ const createPlayer = (name, id, active = false, color) => {
 }
 
 const createBoard = () => {
-
+    return {
+        rows: 6,
+        columns: 7,
+        spaces: constructSpaces(),
+        constructSpaces() {
+            const spaces = []
+            for (let i = 0; i < columns; i++) {
+                const column = [] 
+                for (let j = 0; j < rows; j++) {
+                    column.push(createSpace(i, j, ))
+                }
+                spaces.push(column)
+            }
+        }
+    }
 }
 
 const createToken = (owner, index) => {
@@ -38,6 +52,11 @@ const createToken = (owner, index) => {
     }
 }
 
-const createSpace = () => {
-
+const createSpace = (x, y, id) => {
+    return {
+        x,
+        y,
+        id: `space-${x}-${y}`,
+        token: null
+    }
 }
