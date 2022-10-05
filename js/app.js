@@ -1,5 +1,23 @@
 const createGame = () => {
+    return {
+        players: constructPlayers(),
+        board: createBoard(),
+        ready: false,
 
+        /** 
+         * Creates two player objects
+         * @return  {Array}    An array of two Player objects.
+         */
+        constructPlayers() {
+            const players = [
+                player1 = createPlayer('Player 1', 1, true, '#e15258'),
+                player2 = createPlayer('Player 2', 2, '#e59a13')
+            ]
+
+            return players
+        }
+
+    }
 }
 
 const createPlayer = (name, id, active = false, color) => {
@@ -14,7 +32,6 @@ const createPlayer = (name, id, active = false, color) => {
          * Creates token objects for player
          * @param {integer} num - Number of token objects to be created
          */
-
         constructTokens(number) {
             const tokens = []
             for (let i = 0; i < number; i++) {
@@ -31,15 +48,24 @@ const createBoard = () => {
         rows: 6,
         columns: 7,
         spaces: constructSpaces(),
+
+        /** 
+         * Generates 2D array of spaces. 
+         * @return  {Array}     An array of space objects
+         */
         constructSpaces() {
             const spaces = []
+
             for (let i = 0; i < columns; i++) {
                 const column = [] 
+
                 for (let j = 0; j < rows; j++) {
-                    column.push(createSpace(i, j, ))
+                    column.push(createSpace(i, j))
                 }
                 spaces.push(column)
             }
+
+            return spaces
         }
     }
 }
@@ -52,7 +78,7 @@ const createToken = (owner, index) => {
     }
 }
 
-const createSpace = (x, y, id) => {
+const createSpace = (x, y) => {
     return {
         x,
         y,
