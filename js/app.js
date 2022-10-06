@@ -5,10 +5,21 @@ const createGame = () => {
         players: [
             player1 = createPlayer('Player 1', 1, true, '#e15258'),
             player2 = createPlayer('Player 2', 2, '#e59a13')
-        ],    
-        startGame() {
+        ], 
+        get activePlayer() {
+            return this.players.find(player => player.active)
+        }, 
 
+        /** 
+         * Initializes game. 
+         */  
+        startGame() {
+            board.drawHTMLBoard()
+            activePlayer.activeToken.drawHTMLToken()
+            ready = true
         }
+
+
 
     }
 }
@@ -20,6 +31,12 @@ const createPlayer = (name, id, active = false, color) => {
         active,
         color,
         tokens: constructTokens(21), // a method will be written later that will be creating the tokens
+        get unusedTokens() {
+            return tokens.filter(token => !token.dropped)
+        },
+        get activeToken() {
+            return this.unusedTokens[0]
+        }
     }
 }
 
