@@ -28,6 +28,13 @@ const createBoard = () => {
         rows: 6,
         columns: 7,
         spaces: constructSpaces(this.rows, this.columns),
+        drawHTMLBoard() {
+            for (let column of this.spaces) {
+                for (let space of column) {
+                    space.drawSVGSpace()
+                }
+            }
+        }
     }
 }
 
@@ -35,7 +42,20 @@ const createToken = (owner, index) => {
     return {
         owner, // allows access to the Player object (id and color) that owns the token  
         id: `token-${index}-${owner.id}`, // each token will be creating using a for loop, so we could use the index of the loop
-        dropped: false 
+        dropped: false,
+        drawHTMLToken() {
+            let div = document.createElement('div')
+            document.querySelector('#game-board-underlay')
+                .appendChild(div)
+            div.setAttribute('id', this.id)
+            div.setAttribute('class', 'token')
+            div.style.backgroundColor = this.owner.color
+
+            return div
+        },
+        get htmlToken() {
+            return document.querySelector(`#${this.id}`)
+        }
     }
 }
 
@@ -44,7 +64,20 @@ const createSpace = (x, y) => {
         x,
         y,
         id: `space-${x}-${y}`,
-        token: null
+        token: null,
+        radius: diameter / 2,
+        diameter: 76,
+        drawSVGSpace: () => {
+            const svgSpace = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+            svgSpace.setAttributeNS(null, "id", this.id)
+            svgSpace.setAttributeNS(null, "cx", (this.x * this.diameter) + this.radius)
+            svgSpace.setAttributeNS(null, "cy", (this.y * this.diameter) + this.radius)
+            svgSpace.setAttributeNS(null, "r", this.radius - 8)
+            svgSpace.setAttributeNS(null, "fill", "black")
+            svgSpace.setAttributeNS(null, "stroke", "none")
+            
+            document.querySelector('#mask').appendChild(svgSpace)  
+        }
     }
 }
 
