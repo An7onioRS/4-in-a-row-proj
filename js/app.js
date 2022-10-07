@@ -21,7 +21,6 @@ const createGame = () => {
         */
         handleKeyDown(e) {
             if (!this.ready) {
-            } else {
                 if (e.key == 'ArrowLeft') {
                     this.activePlayer.activeToken.moveLeft()
                 } else if (e.key == 'ArrowRight') {
