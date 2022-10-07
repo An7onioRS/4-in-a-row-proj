@@ -63,8 +63,8 @@ const createBoard = () => {
     return {
         rows: 6,
         columns: 7,
-        spaces: constructSpaces(this.rows, this.columns),
-        drawHTMLBoard() {
+        spaces: constructSpaces(6, 7),
+        drawHTMLBoard() { 
             for (let column of this.spaces) {
                 for (let space of column) {
                     space.drawSVGSpace()
@@ -92,6 +92,18 @@ const createToken = (owner, index) => {
         },
         get htmlToken() {
             return document.querySelector(`#${this.id}`)
+        },
+        
+        /** 
+        * Drops html token into targeted board space.
+        * @param   {Object}   target - Targeted space for dropped token.
+        * @param   {function} reset  - The reset function to call after the drop animation has completed.
+        */
+
+        drop(target) {
+            $(this.htmlToken).animate({
+                top: (target.y * target.diameter)
+            }, 750, 'easeOutBounce', reset)
         },
         
         /** 
