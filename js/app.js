@@ -13,7 +13,25 @@ const createGame = () => {
         },
         get activePlayer() {
             return this.players.find(player => player.active)
-        }, 
+        },
+
+        /**
+        * Branches code, depending on what key player presses
+        * @param   {Object}    e - Keydown event object
+        */
+        handleKeyDown(e) {
+            if (!this.ready) {
+
+            } else {
+                if (e.key == 'ArrowLeft') {
+                    // token should move left
+                } else if (e.key == 'ArrowRight') {
+                    // token should move right
+                } else if (e.key == 'ArrowDown') {
+                    // token should fall
+                }
+            }
+        },
 
         /** 
          * Initializes game. 
@@ -146,6 +164,4 @@ document.querySelector('#begin-game').addEventListener('click', function() {
  * Listen for keyboard presses
  */
 
-document.addEventListener('keydown', function(event) {
-    console.log(event.key); //outputs a string naming the pressed key
-})
+document.addEventListener('keydown', handleKeyDown(e))
