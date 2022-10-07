@@ -96,7 +96,6 @@ const createToken = (owner, index) => {
          * Gets left offset of html element.
          * @return  {number}   Left offset of token object's htmlToken
          */
-
         get offsetLeft() {
             return this.htmlToken.offsetLeft
         },
@@ -104,7 +103,6 @@ const createToken = (owner, index) => {
         /** 
          * Moves html token one column to left.
          */
-
         moveLeft() {
             if (this.columnLocation > 0) {
                 this.htmlToken.left = this.offsetLeft - 76
@@ -116,7 +114,6 @@ const createToken = (owner, index) => {
          * Moves html token one column to right.
          * @param   {number}    columns - number of columns in the game board
          */
-
         moveRight(number) {
             if (this.columnLocation < number) {
                 this.htmlToken.left = this.offsetLeft + 76
