@@ -21,7 +21,6 @@ const createGame = () => {
         */
         handleKeyDown(e) {
             if (!this.ready) {
-
             } else {
                 if (e.key == 'ArrowLeft') {
                     // token should move left
@@ -90,6 +89,15 @@ const createToken = (owner, index) => {
         },
         get htmlToken() {
             return document.querySelector(`#${this.id}`)
+        },
+        
+        /** 
+         * Gets left offset of html element.
+         * @return  {number}   Left offset of token object's htmlToken
+         */
+
+        get offsetLeft() {
+            return this.htmlToken.offsetLeft
         }
     }
 }
@@ -157,11 +165,13 @@ document.querySelector('#begin-game').addEventListener('click', function() {
     game.createPlayerTokens()
     game.startGame()
     this.style.display = 'none'
-    document.querySelector('#play-area').style.opacity = '1'
+    document.querySelector('#play-area').style.opacity = '1'    
 })
 
 /** 
- * Listen for keyboard presses
- */
+* Listen for keyboard presses
+*/
 
-document.addEventListener('keydown', handleKeyDown(e))
+document.addEventListener('keydown', (event) => {
+    game.handleKeyDown(event)
+})
