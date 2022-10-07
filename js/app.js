@@ -117,7 +117,8 @@ const createGame = () => {
                     }           
                 }
             }
-            }
+        }
+    }
 }
 
 const createPlayer = (name, id, active = false, color) => {
