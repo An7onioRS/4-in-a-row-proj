@@ -25,7 +25,7 @@ const createGame = () => {
                 if (e.key == 'ArrowLeft') {
                     this.activePlayer.activeToken.moveLeft()
                 } else if (e.key == 'ArrowRight') {
-                    this.activePlayer.activeToken.moveRight()
+                    this.activePlayer.activeToken.moveRight(this.board.columns)
                 } else if (e.key == 'ArrowDown') {
                     // token should fall
                 }
@@ -61,7 +61,9 @@ const createPlayer = (name, id, active = false, color) => {
 
 const createBoard = () => {
     return {
-        spaces: constructSpaces(6, 7),
+        rows: 6,
+        columns: 7,
+        spaces: constructSpaces(this.rows, this.columns),
         drawHTMLBoard() {
             for (let column of this.spaces) {
                 for (let space of column) {
