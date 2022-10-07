@@ -110,6 +110,18 @@ const createToken = (owner, index) => {
                 this.htmlToken.left = this.offsetLeft - 76
                 this.columnLocation -= 1
             }
+        },
+
+        /** 
+         * Moves html token one column to right.
+         * @param   {number}    columns - number of columns in the game board
+         */
+
+        moveRight(number) {
+            if (this.columnLocation < number) {
+                this.htmlToken.left = this.offsetLeft + 76
+                this.columnLocation += 1
+            }
         }
     }
 }
