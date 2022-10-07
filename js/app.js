@@ -77,6 +77,7 @@ const createToken = (owner, index) => {
         owner, // Allows access to the Player object (id and color) that owns the token  
         id: `token-${index}-${owner.id}`, // each token will be creating using a for loop, so we could use the index of the loop
         dropped: false,
+        columnLocation: 0,
         drawHTMLToken() {
             let div = document.createElement('div')
             document.querySelector('#game-board-underlay')
