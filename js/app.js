@@ -6,6 +6,11 @@ const createGame = () => {
             player1 = createPlayer('Player 1', 1, true, '#e15258'),
             player2 = createPlayer('Player 2', 2, '#e59a13')
         ], 
+        createPlayerTokens() {
+            for (let player of this.players) {
+                 player.tokens = constructTokens(player, 21)
+            }
+        },
         get activePlayer() {
             return this.players.find(player => player.active)
         }, 
@@ -14,13 +19,10 @@ const createGame = () => {
          * Initializes game. 
          */  
         startGame() {
-            board.drawHTMLBoard()
-            activePlayer.activeToken.drawHTMLToken()
+            this.board.drawHTMLBoard()
+            this.activePlayer.activeToken.drawHTMLToken()
             ready = true
         }
-
-
-
     }
 }
 
@@ -30,9 +32,9 @@ const createPlayer = (name, id, active = false, color) => {
         id,
         active,
         color,
-        tokens: constructTokens(21), // a method will be written later that will be creating the tokens
+        tokens: [],
         get unusedTokens() {
-            return tokens.filter(token => !token.dropped)
+            return this.tokens.filter(token => !token.dropped)
         },
         get activeToken() {
             return this.unusedTokens[0]
@@ -42,9 +44,7 @@ const createPlayer = (name, id, active = false, color) => {
 
 const createBoard = () => {
     return {
-        rows: 6,
-        columns: 7,
-        spaces: constructSpaces(this.rows, this.columns),
+        spaces: constructSpaces(6, 7),
         drawHTMLBoard() {
             for (let column of this.spaces) {
                 for (let space of column) {
@@ -57,7 +57,7 @@ const createBoard = () => {
 
 const createToken = (owner, index) => {
     return {
-        owner, // allows access to the Player object (id and color) that owns the token  
+        owner, // Allows access to the Player object (id and color) that owns the token  
         id: `token-${index}-${owner.id}`, // each token will be creating using a for loop, so we could use the index of the loop
         dropped: false,
         drawHTMLToken() {
@@ -82,9 +82,9 @@ const createSpace = (x, y) => {
         y,
         id: `space-${x}-${y}`,
         token: null,
-        radius: diameter / 2,
         diameter: 76,
-        drawSVGSpace: () => {
+        radius: 38,
+        drawSVGSpace: function() {
             const svgSpace = document.createElementNS("http://www.w3.org/2000/svg", "circle")
             svgSpace.setAttributeNS(null, "id", this.id)
             svgSpace.setAttributeNS(null, "cx", (this.x * this.diameter) + this.radius)
@@ -106,7 +106,7 @@ function constructSpaces(rows, columns) {
     const spaces = []
 
     for (let i = 0; i < columns; i++) {
-        const column =[] 
+        const column = [] 
 
         for (let j = 0; j < rows; j++) {
             column.push(createSpace(i, j))
@@ -121,10 +121,10 @@ function constructSpaces(rows, columns) {
  * Creates token objects for player
  * @param {integer} num - Number of token objects to be created
  */
-function constructTokens(number) {
+function constructTokens(owner, number) {
     const tokens = []
     for (let i = 0; i < number; i++) {
-        tokens.push(createToken(this, i))
+        tokens.push(createToken(owner, i))
     }
 
     return tokens
@@ -136,6 +136,7 @@ const game = createGame()
  * Listens for click on `#begin-game` and calls startGame() on game object
  */
 document.querySelector('#begin-game').addEventListener('click', function() {
+    game.createPlayerTokens()
     game.startGame()
     this.style.display = 'none'
     document.querySelector('#play-area').style.opacity = '1'
