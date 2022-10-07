@@ -27,8 +27,27 @@ const createGame = () => {
                 } else if (e.key == 'ArrowRight') {
                     this.activePlayer.activeToken.moveRight(this.board.columns)
                 } else if (e.key == 'ArrowDown') {
-                    // token should fall
+                    this.playToken()
                 }
+            }
+        },
+
+        playToken() {
+            let spaces = this.board.spaces
+            let activeToken = this.activePlayer.activeToken
+            let targetColumn = spaces[activeToken.columnLocation]
+            let targetSpace = null
+
+
+            for (let space of targetColumn) {
+                if (space.token === null) {
+                    targetSpace = space
+                }
+            }
+
+            if (targetSpace !== null) {
+                game.ready = false
+                activeToken.drop(targetSpace)
             }
         },
 
@@ -38,7 +57,7 @@ const createGame = () => {
         startGame() {
             this.board.drawHTMLBoard()
             this.activePlayer.activeToken.drawHTMLToken()
-            ready = true
+            this.ready = true
         }
     }
 }
@@ -99,8 +118,7 @@ const createToken = (owner, index) => {
         * @param   {Object}   target - Targeted space for dropped token.
         * @param   {function} reset  - The reset function to call after the drop animation has completed.
         */
-
-        drop(target) {
+        drop(target, reset) {
             $(this.htmlToken).animate({
                 top: (target.y * target.diameter)
             }, 750, 'easeOutBounce', reset)
