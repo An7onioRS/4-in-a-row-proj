@@ -20,7 +20,7 @@ const createGame = () => {
         * @param   {Object}    e - Keydown event object
         */
         handleKeyDown(e) {
-            if (!this.ready) {
+            if (this.ready) {
                 if (e.key == 'ArrowLeft') {
                     this.activePlayer.activeToken.moveLeft()
                 } else if (e.key == 'ArrowRight') {
@@ -172,6 +172,14 @@ const createSpace = (x, y) => {
             svgSpace.setAttributeNS(null, "stroke", "none")
             
             document.querySelector('#mask').appendChild(svgSpace)  
+        },
+
+        /**
+        * Updates space to reflect a token has been dropped into it.
+        * @param {Object} token - The dropped token
+        */
+        mark(token) {
+            this.token = token
         }
     }
 }
