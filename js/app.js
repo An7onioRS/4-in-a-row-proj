@@ -99,6 +99,17 @@ const createToken = (owner, index) => {
 
         get offsetLeft() {
             return this.htmlToken.offsetLeft
+        },
+
+        /** 
+         * Moves html token one column to left.
+         */
+
+        moveLeft() {
+            if (this.columnLocation > 0) {
+                this.htmlToken.left = this.offsetLeft - 76
+                this.columnLocation -= 1
+            }
         }
     }
 }
