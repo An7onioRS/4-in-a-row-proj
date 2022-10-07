@@ -23,9 +23,9 @@ const createGame = () => {
             if (!this.ready) {
             } else {
                 if (e.key == 'ArrowLeft') {
-                    // token should move left
+                    this.activePlayer.activeToken.moveLeft()
                 } else if (e.key == 'ArrowRight') {
-                    // token should move right
+                    this.activePlayer.activeToken.moveRight()
                 } else if (e.key == 'ArrowDown') {
                     // token should fall
                 }
@@ -105,7 +105,7 @@ const createToken = (owner, index) => {
          */
         moveLeft() {
             if (this.columnLocation > 0) {
-                this.htmlToken.left = this.offsetLeft - 76
+                this.htmlToken.style.left = this.offsetLeft - 76
                 this.columnLocation -= 1
             }
         },
@@ -116,7 +116,7 @@ const createToken = (owner, index) => {
          */
         moveRight(number) {
             if (this.columnLocation < number) {
-                this.htmlToken.left = this.offsetLeft + 76
+                this.htmlToken.style.left = this.offsetLeft + 76
                 this.columnLocation += 1
             }
         }
