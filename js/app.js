@@ -47,8 +47,6 @@ const createGame = () => {
             if (targetSpace !== null) {
                 game.ready = false
                 activeToken.drop(targetSpace)
-
-            
             }
         },
 
@@ -117,6 +115,19 @@ const createGame = () => {
                     }           
                 }
             }
+        },
+
+        /** 
+        * Switches active player. 
+        */
+        switchPlayers() {
+            for (let player of this.players) {
+                if (player.active) {
+                    player.active = false
+                } else {
+                    player.active = true
+                }
+            } 
         }
     }
 }
