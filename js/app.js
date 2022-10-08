@@ -45,9 +45,11 @@ const createGame = () => {
             }
 
             if (targetSpace !== null) {
+                const game = this
                 game.ready = false
+
                 activeToken.drop(targetSpace, function() {
-                    // callback function code here
+                    game.updateGameState(activeToken, targetSpace);
                 })
             }
         },
@@ -128,11 +130,6 @@ const createGame = () => {
                     player.active = false
                 } else {
                     player.active = true
-                    if (!this.activePlayer.activeToken) {
-                        this.gameOver('Game Over! No more tokens available!')
-                    } else {
-
-                    }
                 }
             } 
         },
@@ -224,8 +221,6 @@ const createToken = (owner, index) => {
             div.setAttribute('id', this.id)
             div.setAttribute('class', 'token')
             div.style.backgroundColor = this.owner.color
-
-            return div
         },
         get htmlToken() {
             return document.querySelector(`#${this.id}`)
@@ -237,6 +232,8 @@ const createToken = (owner, index) => {
         * @param   {function} reset  - The reset function to call after the drop animation has completed.
         */
         drop(target, reset) {
+            this.dropped = true
+
             $(this.htmlToken).animate({
                 top: (target.y * target.diameter)
             }, 750, 'easeOutBounce', reset)
