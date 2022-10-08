@@ -3,7 +3,7 @@ const createGame = () => {
         board: createBoard(),
         ready: false,
         players: [
-            player1 = createPlayer('Player 1', 1, true, '#e15258'),
+            player1 = createPlayer('Player 1', 1, '#e15258', true),
             player2 = createPlayer('Player 2', 2, '#e59a13')
         ], 
         createPlayerTokens() {
@@ -69,8 +69,8 @@ const createGame = () => {
         * @return  {boolean}   Boolean value indicating whether the game has been won (true) or not (false)
         */
         checkForWin(target) {
-            const owner = target.token.owner;
-            let win = false;
+            const owner = target.token.owner
+            let win = false
 
             // vertical
             for (let x = 0; x < this.board.columns; x++ ){
@@ -119,6 +119,8 @@ const createGame = () => {
                     }           
                 }
             }
+            
+            return win
         },
 
         /** 
@@ -141,7 +143,7 @@ const createGame = () => {
         gameOver(message) {
             let gameOverElement = document.querySelector('#game-over')
             gameOverElement.style.display = 'block'
-            gameOverElement.style.textContent = message
+            gameOverElement.textContent = message
         },
 
          /** 
@@ -169,7 +171,7 @@ const createGame = () => {
     }
 }
 
-const createPlayer = (name, id, active = false, color) => {
+const createPlayer = (name, id, color, active = false) => {
     return {
         name,
         id,
