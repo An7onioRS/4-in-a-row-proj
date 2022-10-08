@@ -46,7 +46,9 @@ const createGame = () => {
 
             if (targetSpace !== null) {
                 game.ready = false
-                activeToken.drop(targetSpace)
+                activeToken.drop(targetSpace, function() {
+                    // callback function code here
+                })
             }
         },
 
@@ -126,8 +128,45 @@ const createGame = () => {
                     player.active = false
                 } else {
                     player.active = true
+                    if (!this.activePlayer.activeToken) {
+                        this.gameOver('Game Over! No more tokens available!')
+                    } else {
+
+                    }
                 }
             } 
+        },
+        
+        /** 
+        * Displays game over message.
+        * @param {string} message - Game over message.      
+        */
+        gameOver(message) {
+            let gameOverElement = document.querySelector('#game-over')
+            gameOverElement.style.display = 'block'
+            gameOverElement.style.textContent = message
+        },
+
+         /** 
+         * Updates game state after token is dropped. 
+         * @param   {Object}  token  -  The token that's being dropped.
+         * @param   {Object}  target -  Targeted space for dropped token.
+         */
+        updateGameState(token, target) {
+            target.mark(token)
+
+            if (!this.checkForWin(target)) {
+                
+                this.switchPlayers()
+
+                if (this.activePlayer.checkTokens()) {
+                    this.activePlayer.activeToken.drawHTMLToken()
+                    this.ready = true
+                } else {
+                    this.gameOver('Game over! No more tokens')
+                }
+        } else {
+            this.gameOver(`${target.owner.name} wins`)
         }
     }
 }
@@ -144,6 +183,14 @@ const createPlayer = (name, id, active = false, color) => {
         },
         get activeToken() {
             return this.unusedTokens[0]
+        },
+        
+        /**
+         * Check if a player has any undropped tokens left
+         * @return {Boolean}
+         */
+        checkTokens() {
+            return this.unusedTokens.length == 0 ? false : true
         }
     }
 }
