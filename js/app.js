@@ -165,8 +165,9 @@ const createGame = () => {
                 } else {
                     this.gameOver('Game over! No more tokens')
                 }
-        } else {
-            this.gameOver(`${target.owner.name} wins`)
+            } else {
+                this.gameOver(`${target.owner.name} wins`)
+            }
         }
     }
 }
