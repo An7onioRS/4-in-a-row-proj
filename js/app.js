@@ -173,8 +173,8 @@ const createGame = (() => {
     }
     return {
         createPlayerTokens,
-        getActivePlayer,
         handleKeyDown,
+        getActivePlayer,
         playToken,
         updateGameState,
         gameOver,
