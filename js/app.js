@@ -1,4 +1,4 @@
-const createGame = (() => {
+const game = (() => {
     let board = createBoard()
     let ready = false
     let players = [
@@ -184,7 +184,7 @@ const createGame = (() => {
     }
 })()
 
-const createPlayer = (name, id, color, active = false) => {
+function createPlayer(name, id, color, active = false) {
     return {
         name,
         id,
@@ -208,7 +208,7 @@ const createPlayer = (name, id, color, active = false) => {
     }
 }
 
-const createBoard = () => {
+function createBoard() {
     return {
         rows: 6,
         columns: 7,
@@ -285,7 +285,7 @@ const createToken = (owner, index) => {
     }
 }
 
-const createSpace = (x, y) => {
+function createSpace(x, y) {
     return {
         x,
         y,
@@ -358,8 +358,6 @@ function constructTokens(owner, number) {
 
     return tokens
 }
-
-const game = createGame()
 
 /** 
  * Listens for click on `#begin-game` and calls startGame() on game object
