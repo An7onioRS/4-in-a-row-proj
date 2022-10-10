@@ -1,175 +1,188 @@
-const createGame = () => {
-    return {
-        board: createBoard(),
-        ready: false,
-        players: [
-            player1 = createPlayer('Player 1', 1, '#e15258', true),
-            player2 = createPlayer('Player 2', 2, '#e59a13')
-        ], 
-        createPlayerTokens() {
-            for (let player of this.players) {
+const createGame = (() => {
+    let board = createBoard()
+    let ready = false
+    let players = [
+        player1 = createPlayer('Player 1', 1, '#e15258', true),
+        player2 = createPlayer('Player 2', 2, '#e59a13') 
+    ]
+    let createPlayerTokens = () => {
+            for (let player of players) {
                  player.tokens = constructTokens(player, 21)
             }
-        },
-        get activePlayer() {
-            return this.players.find(player => player.active)
-        },
+        }
+    let getActivePlayer = () => {
+        return players.find(player => player.active)
+    }
 
-        /**
-        * Branches code, depending on what key player presses
-        * @param   {Object}    e - Keydown event object
-        */
-        handleKeyDown(e) {
-            if (this.ready) {
-                if (e.key == 'ArrowLeft') {
-                    this.activePlayer.activeToken.moveLeft()
-                } else if (e.key == 'ArrowRight') {
-                    this.activePlayer.activeToken.moveRight(this.board.columns)
-                } else if (e.key == 'ArrowDown') {
-                    this.playToken()
-                }
-            }
-        },
-
-        playToken() {
-            let spaces = this.board.spaces
-            let activeToken = this.activePlayer.activeToken
-            let targetColumn = spaces[activeToken.columnLocation]
-            let targetSpace = null
-
-
-            for (let space of targetColumn) {
-                if (space.token === null) {
-                    targetSpace = space
-                }
-            }
-
-            if (targetSpace !== null) {
-                const game = this
-                game.ready = false
-
-                activeToken.drop(targetSpace, function() {
-                    game.updateGameState(activeToken, targetSpace);
-                })
-            }
-        },
-
-        /** 
-         * Initializes game. 
-         */  
-        startGame() {
-            this.board.drawHTMLBoard()
-            this.activePlayer.activeToken.drawHTMLToken()
-            this.ready = true
-        },
-
-        /** 
-        * Checks if there a winner on the board after each token drop.
-        * @param   {Object}    Targeted space for dropped token.
-        * @return  {boolean}   Boolean value indicating whether the game has been won (true) or not (false)
-        */
-        checkForWin(target) {
-            const owner = target.token.owner
-            let win = false
-
-            // vertical
-            for (let x = 0; x < this.board.columns; x++ ){
-                for (let y = 0; y < this.board.rows - 3; y++){
-                    if (this.board.spaces[x][y].owner === owner && 
-                        this.board.spaces[x][y+1].owner === owner && 
-                        this.board.spaces[x][y+2].owner === owner && 
-                        this.board.spaces[x][y+3].owner === owner) {
-                            win = true;
-                    }           
-                }
-            }
-
-            // horizontal
-            for (let x = 0; x < this.board.columns - 3; x++ ){
-                for (let y = 0; y < this.board.rows; y++){
-                    if (this.board.spaces[x][y].owner === owner && 
-                        this.board.spaces[x+1][y].owner === owner && 
-                        this.board.spaces[x+2][y].owner === owner && 
-                        this.board.spaces[x+3][y].owner === owner) {
-                            win = true;
-                    }           
-                }
-            }
-
-            // diagonal
-            for (let x = 3; x < this.board.columns; x++ ){
-                for (let y = 0; y < this.board.rows - 3; y++){
-                    if (this.board.spaces[x][y].owner === owner && 
-                        this.board.spaces[x-1][y+1].owner === owner && 
-                        this.board.spaces[x-2][y+2].owner === owner && 
-                        this.board.spaces[x-3][y+3].owner === owner) {
-                            win = true;
-                    }           
-                }
-            }
-
-            // diagonal
-            for (let x = 3; x < this.board.columns; x++ ){
-                for (let y = 3; y < this.board.rows; y++){
-                    if (this.board.spaces[x][y].owner === owner && 
-                        this.board.spaces[x-1][y-1].owner === owner && 
-                        this.board.spaces[x-2][y-2].owner === owner && 
-                        this.board.spaces[x-3][y-3].owner === owner) {
-                            win = true;
-                    }           
-                }
-            }
-            
-            return win
-        },
-
-        /** 
-        * Switches active player. 
-        */
-        switchPlayers() {
-            for (let player of this.players) {
-                if (player.active) {
-                    player.active = false
-                } else {
-                    player.active = true
-                }
-            } 
-        },
-        
-        /** 
-        * Displays game over message.
-        * @param {string} message - Game over message.      
-        */
-        gameOver(message) {
-            let gameOverElement = document.querySelector('#game-over')
-            gameOverElement.style.display = 'block'
-            gameOverElement.textContent = message
-        },
-
-         /** 
-         * Updates game state after token is dropped. 
-         * @param   {Object}  token  -  The token that's being dropped.
-         * @param   {Object}  target -  Targeted space for dropped token.
-         */
-        updateGameState(token, target) {
-            target.mark(token)
-
-            if (!this.checkForWin(target)) {
-                
-                this.switchPlayers()
-
-                if (this.activePlayer.checkTokens()) {
-                    this.activePlayer.activeToken.drawHTMLToken()
-                    this.ready = true
-                } else {
-                    this.gameOver('Game over! No more tokens')
-                }
-            } else {
-                this.gameOver(`${target.owner.name} wins`)
+    /**
+    * Branches code, depending on what key player presses
+    * @param   {Object}    e - Keydown event object
+    */
+    let handleKeyDown = (e) => {
+        let currActivePlayer = getActivePlayer()
+        if (ready) {
+            if (e.key == 'ArrowLeft') {
+                currActivePlayer.activeToken.moveLeft()
+            } else if (e.key == 'ArrowRight') {
+                currActivePlayer.activeToken.moveRight(board.columns)
+            } else if (e.key == 'ArrowDown') {
+                playToken()
             }
         }
     }
-}
+
+    let playToken = () => {
+        currActivePlayer = getActivePlayer()
+        let spaces = board.spaces
+        let activeToken = currActivePlayer.activeToken
+        let targetColumn = spaces[activeToken.columnLocation]
+        let targetSpace = null
+
+
+        for (let space of targetColumn) {
+            if (space.token === null) {
+                targetSpace = space
+            }
+        }
+
+        if (targetSpace !== null) {
+            const game = this
+            game.ready = false
+
+            activeToken.drop(targetSpace, function() {
+                game.updateGameState(activeToken, targetSpace);
+            })
+        }
+    }
+
+    /** 
+     * Initializes game. 
+     */  
+    let startGame = () => {
+        let currActivePlayer = getActivePlayer()
+        board.drawHTMLBoard()
+        currActivePlayer.activeToken.drawHTMLToken()
+        ready = true
+    }
+
+    /** 
+    * Checks if there a winner on the board after each token drop.
+    * @param   {Object}    Targeted space for dropped token.
+    * @return  {boolean}   Boolean value indicating whether the game has been won (true) or not (false)
+    */
+    let checkForWin = (target) => {
+        const owner = target.token.owner
+        let win = false
+
+        // vertical
+        for (let x = 0; x < board.columns; x++ ){
+            for (let y = 0; y < board.rows - 3; y++){
+                if (board.spaces[x][y].owner === owner && 
+                    board.spaces[x][y+1].owner === owner && 
+                    board.spaces[x][y+2].owner === owner && 
+                    board.spaces[x][y+3].owner === owner) {
+                        win = true;
+                }           
+            }
+        }
+
+        // horizontal
+        for (let x = 0; x < board.columns - 3; x++ ){
+            for (let y = 0; y < board.rows; y++){
+                if (board.spaces[x][y].owner === owner && 
+                    board.spaces[x+1][y].owner === owner && 
+                    board.spaces[x+2][y].owner === owner && 
+                    board.spaces[x+3][y].owner === owner) {
+                        win = true;
+                }           
+            }
+        }
+
+        // diagonal
+        for (let x = 3; x < board.columns; x++ ){
+            for (let y = 0; y < board.rows - 3; y++){
+                if (board.spaces[x][y].owner === owner && 
+                    board.spaces[x-1][y+1].owner === owner && 
+                    board.spaces[x-2][y+2].owner === owner && 
+                    board.spaces[x-3][y+3].owner === owner) {
+                        win = true;
+                }           
+            }
+        }
+
+        // diagonal
+        for (let x = 3; x < board.columns; x++ ){
+            for (let y = 3; y < board.rows; y++){
+                if (board.spaces[x][y].owner === owner && 
+                    board.spaces[x-1][y-1].owner === owner && 
+                    board.spaces[x-2][y-2].owner === owner && 
+                    board.spaces[x-3][y-3].owner === owner) {
+                        win = true;
+                }           
+            }
+        }
+        
+        return win
+    }
+
+    /** 
+    * Switches active player. 
+    */
+    const switchPlayers = () => {
+        for (let player of players) {
+            if (player.active) {
+                player.active = false
+            } else {
+                player.active = true
+            }
+        } 
+    }
+    
+    /** 
+    * Displays game over message.
+    * @param {string} message - Game over message.      
+    */
+    const gameOver = (message) => {
+        let gameOverElement = document.querySelector('#game-over')
+        gameOverElement.style.display = 'block'
+        gameOverElement.textContent = message
+    }
+
+     /** 
+     * Updates game state after token is dropped. 
+     * @param   {Object}  token  -  The token that's being dropped.
+     * @param   {Object}  target -  Targeted space for dropped token.
+     */
+    const updateGameState = (token, target) => {
+        target.mark(token)
+        currActivePlayer = getActivePlayer()
+
+        if (!checkForWin(target)) {
+            
+            switchPlayers()
+
+            if (currActivePlayer.checkTokens()) {
+                currActivePlayer.activeToken.drawHTMLToken()
+                ready = true
+            } else {
+                gameOver('Game over! No more tokens')
+            }
+        } else {
+            gameOver(`${target.owner.name} wins`)
+        }
+    }
+    return {
+        createPlayerTokens,
+        getActivePlayer,
+        handleKeyDown,
+        playToken,
+        updateGameState,
+        gameOver,
+        switchPlayers,
+        checkForWin,
+        startGame
+    }
+})()
 
 const createPlayer = (name, id, color, active = false) => {
     return {
