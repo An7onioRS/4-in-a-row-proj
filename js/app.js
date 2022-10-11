@@ -26,7 +26,7 @@ const game = (() => {
             if (e.key == 'ArrowLeft') {
                 currActivePlayer.getActiveToken(currActivePlayer.tokens).moveLeft()
             } else if (e.key == 'ArrowRight') {
-                currActivePlayer.getActiveToken(currActivePlayer.tokens).moveRight(board.columns)
+                currActivePlayer.getActiveToken(currActivePlayer.tokens).moveRight(board.columns - 1)
             } else if (e.key == 'ArrowDown') {
                 playToken()
             }
@@ -134,11 +134,12 @@ const game = (() => {
      */
     const updateGameState = (token, target) => {
         target.mark(token)
+        currActivePlayer = getActivePlayer()
 
         if (!checkForWin(target)) {
             
             switchPlayers()
-            currActivePlayer = getActivePlayer()
+            currActivePlayer = getActivePlayer()    
 
             if (currActivePlayer.checkTokens(currActivePlayer.tokens)) {
                 currActivePlayer.getActiveToken(currActivePlayer.tokens).drawHTMLToken()
