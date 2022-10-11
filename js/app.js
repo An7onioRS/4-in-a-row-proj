@@ -2,14 +2,16 @@ const game = (() => {
     let board = createBoard()
     let ready = false
     let players = [
-        player1 = createPlayer('Player 1', 1, '#e15258', true),
-        player2 = createPlayer('Player 2', 2, '#e59a13') 
+        createPlayer('Player 1', 1, '#e15258', true),
+        createPlayer('Player 2', 2, '#e59a13') 
     ]
-    let createPlayerTokens = () => {
-            for (let player of players) {
-                 player.tokens = constructTokens(player, 21)
-            }
+
+    function createPlayerTokens() {
+        for (let player of players) {
+            player.tokens = constructTokens(player, 21)
         }
+    }
+    
     let getActivePlayer = () => {
         return players.find(player => player.active)
     }
@@ -22,36 +24,12 @@ const game = (() => {
         let currActivePlayer = getActivePlayer()
         if (ready) {
             if (e.key == 'ArrowLeft') {
-                currActivePlayer.activeToken.moveLeft()
+                currActivePlayer.getActiveToken(currActivePlayer.tokens).moveLeft()
             } else if (e.key == 'ArrowRight') {
-                currActivePlayer.activeToken.moveRight(board.columns)
+                currActivePlayer.getActiveToken(currActivePlayer.tokens).moveRight(board.columns)
             } else if (e.key == 'ArrowDown') {
                 playToken()
             }
-        }
-    }
-
-    let playToken = () => {
-        currActivePlayer = getActivePlayer()
-        let spaces = board.spaces
-        let activeToken = currActivePlayer.activeToken
-        let targetColumn = spaces[activeToken.columnLocation]
-        let targetSpace = null
-
-
-        for (let space of targetColumn) {
-            if (space.token === null) {
-                targetSpace = space
-            }
-        }
-
-        if (targetSpace !== null) {
-            const game = this
-            game.ready = false
-
-            activeToken.drop(targetSpace, function() {
-                game.updateGameState(activeToken, targetSpace);
-            })
         }
     }
 
@@ -60,8 +38,9 @@ const game = (() => {
      */  
     let startGame = () => {
         let currActivePlayer = getActivePlayer()
+        let currActiveToken = currActivePlayer.getActiveToken(currActivePlayer.tokens)
         board.drawHTMLBoard()
-        currActivePlayer.activeToken.drawHTMLToken()
+        currActiveToken.drawHTMLToken()
         ready = true
     }
 
@@ -155,14 +134,14 @@ const game = (() => {
      */
     const updateGameState = (token, target) => {
         target.mark(token)
-        currActivePlayer = getActivePlayer()
 
         if (!checkForWin(target)) {
             
             switchPlayers()
+            currActivePlayer = getActivePlayer()
 
-            if (currActivePlayer.checkTokens()) {
-                currActivePlayer.activeToken.drawHTMLToken()
+            if (currActivePlayer.checkTokens(currActivePlayer.tokens)) {
+                currActivePlayer.getActiveToken(currActivePlayer.tokens).drawHTMLToken()
                 ready = true
             } else {
                 gameOver('Game over! No more tokens')
@@ -172,40 +151,42 @@ const game = (() => {
         }
     }
     return {
-        createPlayerTokens,
+        board,
+        startGame,
         handleKeyDown,
-        getActivePlayer,
-        playToken,
+        createPlayerTokens,
         updateGameState,
-        gameOver,
-        switchPlayers,
-        checkForWin,
-        startGame
+        getActivePlayer
     }
 })()
 
 function createPlayer(name, id, color, active = false) {
-    return {
-        name,
-        id,
-        active,
-        color,
-        tokens: [],
-        get unusedTokens() {
-            return this.tokens.filter(token => !token.dropped)
-        },
-        get activeToken() {
-            return this.unusedTokens[0]
-        },
+
+        let getUnusedTokens = (tokens) => {
+            return tokens.filter(token => !token.dropped)
+        }
+
+        let getActiveToken = (tokens) => {
+            let unusedTokens = getUnusedTokens(tokens)
+            return unusedTokens[0]
+        }
         
         /**
          * Check if a player has any undropped tokens left
          * @return {Boolean}
          */
-        checkTokens() {
-            return this.unusedTokens.length == 0 ? false : true
+        let checkTokens = (tokens) => {
+            return getUnusedTokens(tokens).length == 0 ? false : true
         }
-    }
+
+        return {
+            name,
+            id,
+            color,
+            active,
+            getActiveToken,
+            checkTokens
+        }
 }
 
 function createBoard() {
@@ -223,7 +204,7 @@ function createBoard() {
     }
 }
 
-const createToken = (owner, index) => {
+function createToken(owner, index) {
     return {
         owner, // Allows access to the Player object (id and color) that owns the token  
         id: `token-${index}-${owner.id}`, // each token will be creating using a for loop, so we could use the index of the loop
@@ -359,6 +340,29 @@ function constructTokens(owner, number) {
     return tokens
 }
 
+let playToken = () => {
+    let currActivePlayer = game.getActivePlayer()
+    let spaces = game.board.spaces
+    let activeToken = currActivePlayer.getActiveToken(currActivePlayer.tokens)
+    let targetColumn = spaces[activeToken.columnLocation]
+    let targetSpace = null
+
+
+    for (let space of targetColumn) {
+        if (space.token === null) {
+            targetSpace = space
+        }
+    }
+
+    if (targetSpace !== null) {
+        game.ready = false
+
+        activeToken.drop(targetSpace, function() {
+            game.updateGameState(activeToken, targetSpace);
+        })
+    }
+}
+
 /** 
  * Listens for click on `#begin-game` and calls startGame() on game object
  */
@@ -366,7 +370,7 @@ document.querySelector('#begin-game').addEventListener('click', function() {
     game.createPlayerTokens()
     game.startGame()
     this.style.display = 'none'
-    document.querySelector('#play-area').style.opacity = '1'    
+    document.querySelector('#play-area').style.opacity = '1'   
 })
 
 /** 
